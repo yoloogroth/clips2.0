@@ -1,9 +1,7 @@
-<<<<<<< HEAD:.github/workflows/master_ci_cd.yml
+
 
 name: master CI, CD workflow 
-=======
-name: release CI, CD workflow 
->>>>>>> 9ab335f780d811c75e21c30e8f9787a7d00aa499:.github/workflows/release_ci_cd.yml
+
 
 on: 
   push:
