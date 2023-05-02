@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import ClipsDataService from "../services/clip.service";
 import '../styles/tarjetas.css';
 
-
 import Clip from "./clip.component";
 
 export default class ClipsList extends Component {
