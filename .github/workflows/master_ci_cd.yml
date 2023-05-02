@@ -1,4 +1,9 @@
+<<<<<<< HEAD:.github/workflows/master_ci_cd.yml
+
+name: master CI, CD workflow 
+=======
 name: release CI, CD workflow 
+>>>>>>> 9ab335f780d811c75e21c30e8f9787a7d00aa499:.github/workflows/release_ci_cd.yml
 
 on: 
   push:
@@ -43,7 +48,7 @@ jobs:
           docker cp build/.  serving_base:/usr/local/apache2/htdocs
           
       - name: Build the custom Docker image
-        run: docker commit --change "ENV MODEL_NAME ${{secrets.MODEL_NAME_TEST}}" serving_base ${{secrets.DOCKER_USER}}/${{secrets.MODEL_NAME_TEST}}:${{github.sha}}
+        run: docker commit --change "ENV MODEL_NAME ${{secrets.MODEL_NAME_MASTER}}" serving_base ${{secrets.DOCKER_USER}}/${{secrets.MODEL_NAME_MASTER}}:${{github.sha}}
 
       - name: show docker images
         run: docker images
@@ -56,13 +61,14 @@ jobs:
           docker login -u $DOCKER_USER -p $DOCKER_PASSWORD 
           
       - name: Docker Push
-        run: docker push ${{secrets.DOCKER_USER}}/${{secrets.MODEL_NAME_TEST}}:${{github.sha}}
+        run: docker push ${{secrets.DOCKER_USER}}/${{secrets.MODEL_NAME_MASTER}}:${{github.sha}}
       
       - name: update docker user in k8 
         run: sed -i 's/{docker_user}/${{secrets.DOCKER_USER}}/g' manifests/k8s.yaml
 
       - name: update model name in k8 
-        run: sed -i 's/{model_name}/${{secrets.MODEL_NAME_TEST}}/g' manifests/k8s.yaml
+
+        run: sed -i 's/{model_name}/${{secrets.MODEL_NAME_MASTER}}/g' manifests/k8s.yaml
       - name: update model nodo in k8 
         run: sed -i 's/{nodo}/${{secrets.NODO}}/g' manifests/k8s.yaml
       - name: update _ by - 
@@ -84,10 +90,11 @@ jobs:
         with:
           namespace: ${{secrets.OKTETO_NAMESPACE }}
           manifest: manifests/k8s.yaml
-          tag: ${{ secrets.DOCKER_USER }}/${{secrets.MODEL_NAME_TEST}}:${{github.sha}}
+          tag: ${{ secrets.DOCKER_USERNAME }}/${{secrets.MODEL_NAME_MASTER}}:${{github.sha}}
           
           
           
           
 #To-do list: Update data of accounts if it's neccesary
+          
           
