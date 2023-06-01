@@ -1,34 +1,64 @@
-import React from "react";
-import '../styles/clip.css'
+import React, { useState } from "react";
+import KafkaService from "../services/kafka.service";
 
-function CommentsComponent() {
-  return (
-    <div class="comments-section">
-      <h4>Comments</h4>
-      <form>
-        <div class="form-group">
-          <label for="comment-input">Leave a comment:</label>
-          <textarea
-            id="comment-input"
-            name="comment"
-            rows="4"
-            placeholder="Write your comment here..."
-          ></textarea>
-        </div>
-        <button type="submit">Submit</button>
-      </form>
-      <div class="comments-list">
-        <div class="comment">
-          <h5>User1</h5>
-          <p>This is a comment.</p>
-        </div>
-        <div class="comment">
-          <h5>User2</h5>
-          <p>This is another comment.</p>
-        </div>
-      </div>
-    </div>
-  );
-}
+const CommentBox = () => {
+    const [comments, setComments] = useState([]);
+    const [newComment, setNewComment] = useState("");
+    const [showForm, setShowForm] = useState(false);
 
-export default CommentsComponent;
+    const handleNewComment = (event) => {
+        setNewComment(event.target.value);
+    };
+
+    const handleAddComment = () => {
+        if (newComment !== "") {
+            const newCommentObj = {
+                text: newComment
+            };
+            setComments([...comments, newCommentObj]);
+            setNewComment("");
+            setShowForm(false);
+            saveComment(1 , comments);
+            
+        }
+    };
+    
+    const saveComment = (status, comment) => {
+    let data = {
+      id: 0,
+      status: status
+    };
+ 
+    console.log(JSON.stringify(data));
+ 
+    KafkaService.comment("usuario","objeto", comment);
+  }
+
+
+    return (
+        <div className="comment-box">
+            <div className="comments">
+                {comments.map((comment, index) => (
+                    <div className="comment" key={index}>
+                        <p className="comment-text">{comment.text}</p>
+                    </div>
+                ))}
+            </div>
+            {showForm ? (
+                <div className="comment-form">
+                    <textarea
+                        value={newComment}
+                        onChange={handleNewComment}
+                        placeholder="Add a comment..."
+                    />
+                    <button onClick={handleAddComment}>Post</button>
+                    <button onClick={() => setShowForm(false)}>Cancel</button>
+                </div>
+            ) : (
+                <button class="btn btn-primary" onClick={() => setShowForm(true)}>Add a comment</button>
+            )}
+        </div>
+    );
+};
+
+export default CommentBox;
